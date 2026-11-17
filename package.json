@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export:pages": "next build && node scripts/sync-pages.mjs",
     "start": "next start",
     "lint": "next lint"
   },
