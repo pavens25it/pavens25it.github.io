@@ -2,6 +2,8 @@ import React from "react";
 
 interface ProjectVisualProps {
   slug: string;
+  repoName?: string;
+  language?: string;
   className?: string;
 }
 
@@ -11,6 +13,8 @@ interface ProjectVisualProps {
  */
 export function ProjectVisual({
   slug,
+  repoName,
+  language,
   className = "aspect-[16/10] w-full",
 }: ProjectVisualProps) {
   switch (slug) {
@@ -377,7 +381,7 @@ export function ProjectVisual({
         </svg>
       );
 
-    default:
+    case "web-to-fun":
       return (
         <svg
           viewBox="0 0 640 400"
@@ -442,5 +446,98 @@ export function ProjectVisual({
           </text>
         </svg>
       );
+
+    default: {
+      const displayRepo = (repoName || slug).toUpperCase().slice(0, 32);
+      const displayLang = (language || "PUBLIC REPOSITORY").toUpperCase();
+      return (
+        <svg
+          viewBox="0 0 640 400"
+          className={`${className} block bg-charcoal`}
+          role="img"
+          aria-label={`Architectural repository plate for ${repoName || slug}`}
+        >
+          <rect width="640" height="400" fill="#242321" />
+          <g stroke="#76543B" strokeOpacity="0.22" strokeWidth="1">
+            <line x1="0" y1="100" x2="640" y2="100" />
+            <line x1="0" y1="200" x2="640" y2="200" />
+            <line x1="0" y1="300" x2="640" y2="300" />
+            <line x1="160" y1="0" x2="160" y2="400" />
+            <line x1="320" y1="0" x2="320" y2="400" />
+            <line x1="480" y1="0" x2="480" y2="400" />
+          </g>
+
+          <text
+            x="36"
+            y="44"
+            fill="#76543B"
+            fontFamily="monospace"
+            fontSize="11"
+            letterSpacing="2.4"
+          >
+            LIVE SYNC // GITHUB REPOSITORY
+          </text>
+
+          <rect
+            x="48"
+            y="96"
+            width="544"
+            height="196"
+            fill="#76543B"
+            fillOpacity="0.1"
+            stroke="#C47A36"
+            strokeWidth="1.25"
+          />
+
+          <text
+            x="76"
+            y="148"
+            fill="#76543B"
+            fontFamily="monospace"
+            fontSize="11"
+            letterSpacing="2"
+          >
+            GITHUB.COM / PAVENS25IT
+          </text>
+
+          <text
+            x="76"
+            y="204"
+            fill="#C47A36"
+            fontFamily="Georgia, serif"
+            fontSize="30"
+          >
+            {displayRepo}
+          </text>
+
+          <line x1="76" y1="230" x2="564" y2="230" stroke="#76543B" strokeOpacity="0.6" />
+
+          <text
+            x="76"
+            y="262"
+            fill="#C47A36"
+            fillOpacity="0.8"
+            fontFamily="monospace"
+            fontSize="11"
+            letterSpacing="1.8"
+          >
+            PRIMARY LANGUAGE: {displayLang}
+          </text>
+
+          <line x1="36" y1="338" x2="604" y2="338" stroke="#76543B" strokeOpacity="0.5" />
+          <text
+            x="36"
+            y="366"
+            fill="#C47A36"
+            fillOpacity="0.7"
+            fontFamily="monospace"
+            fontSize="10"
+            letterSpacing="1.6"
+          >
+            AUTO-SYNCED FROM PUBLIC GITHUB PROFILE
+          </text>
+        </svg>
+      );
+    }
   }
 }

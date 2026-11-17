@@ -8,13 +8,11 @@ import {
   LinkedInIcon,
   MailIcon,
 } from "@/components/Icons";
-import { ProjectCard } from "@/components/ProjectCard";
+import { FeaturedProjectsSection } from "@/components/FeaturedProjectsSection";
 import { Reveal } from "@/components/Reveal";
-import { PROFILE, PROJECTS, SKILL_CATEGORIES } from "@/data/portfolio";
+import { PROFILE, SKILL_CATEGORIES } from "@/data/portfolio";
 
 export default function HomePage() {
-  const featuredProjects = PROJECTS.filter((project) => project.featured);
-
   return (
     <div className="bg-transparent">
       {/* HERO SECTION */}
@@ -279,47 +277,7 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 03 — FEATURED PROJECTS */}
-      <section id="projects" className="scroll-mt-24 border-b border-earth/45">
-        <div className="mx-auto max-w-7xl px-6 py-24 sm:px-10 sm:py-32 lg:px-12">
-          <Reveal>
-            <div className="flex flex-col justify-between gap-6 border-b border-earth/45 pb-10 lg:flex-row lg:items-end">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-[0.22em] text-earth">
-                  03 — Selected Works
-                </p>
-                <h2 className="mt-4 font-serif text-4xl leading-[1.05] font-medium text-amber sm:text-5xl">
-                  Featured Projects
-                </h2>
-              </div>
-              <p className="max-w-md text-sm leading-relaxed text-amber/80">
-                A curated selection of public engineering projects spanning Java
-                cloud systems, relational evaluation engines, and TypeScript web
-                applications.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="mt-12 grid gap-10 lg:grid-cols-2">
-            {featuredProjects.map((project, idx) => (
-              <Reveal key={project.slug} delayMs={idx * 70}>
-                <ProjectCard project={project} />
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal className="mt-14 flex justify-start sm:justify-end">
-            <Link
-              href="/projects"
-              className="group inline-flex items-center gap-4 border border-amber bg-charcoal/85 px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-amber transition-colors duration-300 hover:bg-amber hover:text-charcoal"
-            >
-              <span>
-                View All Projects ({String(PROJECTS.length).padStart(2, "0")})
-              </span>
-              <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </Reveal>
-        </div>
-      </section>
+      <FeaturedProjectsSection />
 
       {/* SECTION 04 — CONTACT */}
       <section id="contact" className="scroll-mt-24">

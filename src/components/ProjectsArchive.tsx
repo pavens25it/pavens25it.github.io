@@ -2,15 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import {
-  PROJECT_CATEGORIES,
-  PROJECTS,
-  type ProjectCategory,
-} from "@/data/portfolio";
+import { PROJECT_CATEGORIES, type ProjectCategory } from "@/data/portfolio";
+import { useSyncedProjects } from "@/lib/github";
 import { ArrowRightIcon, ArrowUpRightIcon, GitHubIcon } from "./Icons";
 import { ProjectVisual } from "./ProjectVisual";
 
 export function ProjectsArchive() {
+  const { projects, syncStatus } = useSyncedProjects();
   const [selectedCategory, setSelectedCategory] = useState<
     "All" | ProjectCategory
   >("All");
@@ -18,8 +16,8 @@ export function ProjectsArchive() {
 
   const filteredProjects =
     selectedCategory === "All"
-      ? PROJECTS
-      : PROJECTS.filter((project) => project.category === selectedCategory);
+      ? projects
+      : projects.filter((project) => project.category === selectedCategory);
 
   return (
     <div>
@@ -34,8 +32,8 @@ export function ProjectsArchive() {
             const active = selectedCategory === category;
             const count =
               category === "All"
-                ? PROJECTS.length
-                : PROJECTS.filter((p) => p.category === category).length;
+                ? projects.length
+                : projects.filter((p) => p.category === category).length;
 
             return (
               <button
@@ -47,7 +45,7 @@ export function ProjectsArchive() {
                 className={`border px-4 py-2 font-mono text-xs uppercase tracking-[0.16em] transition-colors duration-200 cursor-pointer ${
                   active
                     ? "border-amber bg-amber text-charcoal font-medium"
-                    : "border-earth/60 bg-charcoal text-amber/80 hover:border-amber hover:text-amber"
+                    : "border-earth/60 bg-charcoal/85 text-amber/80 hover:border-amber hover:text-amber"
                 }`}
               >
                 {category} ({String(count).padStart(2, "0")})
@@ -56,10 +54,21 @@ export function ProjectsArchive() {
           })}
         </div>
 
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-amber/65">
-          Showing {String(filteredProjects.length).padStart(2, "0")} of{" "}
-          {String(PROJECTS.length).padStart(2, "0")} repositories
-        </p>
+        <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[0.18em]">
+          <span className="text-amber/70">
+            Showing {String(filteredProjects.length).padStart(2, "0")} of{" "}
+            {String(projects.length).padStart(2, "0")} repositories
+          </span>
+          {syncStatus === "synced" && (
+            <span className="inline-flex items-center gap-2 border border-earth/60 bg-charcoal/80 px-2.5 py-1 text-[10px] text-amber/85">
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 bg-amber"
+              />
+              <span>GitHub Live Sync</span>
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Editorial project archive list / grid */}
@@ -68,9 +77,24 @@ export function ProjectsArchive() {
           const isExpanded = expandedSlug === project.slug;
           const isLead = idx === 0 && selectedCategory === "All";
 
+          const visualContent = (
+            <div className="h-full transition-transform duration-500 ease-out group-hover:scale-[1.015]">
+              <ProjectVisual
+                slug={project.slug}
+                repoName={project.repoName}
+                language={project.primaryLanguage}
+                className={
+                  isLead
+                    ? "h-full min-h-[260px] w-full"
+                    : "aspect-[16/10] w-full"
+                }
+              />
+            </div>
+          );
+
           return (
             <article
-              key={project.slug}
+              key={`${project.repoName}-${project.slug}`}
               className={`group flex flex-col border border-earth/55 bg-charcoal/85 transition-colors duration-300 hover:border-amber ${
                 isLead ? "lg:col-span-2" : ""
               }`}
@@ -80,7 +104,12 @@ export function ProjectsArchive() {
                 <span className="text-amber">
                   {project.index} — {project.repoName}
                 </span>
-                <div className="flex items-center gap-4 text-amber/70">
+                <div className="flex items-center gap-3 text-amber/70">
+                  {!project.isCurated && (
+                    <span className="border border-amber/60 px-2 py-0.5 text-[10px] text-amber">
+                      Synced
+                    </span>
+                  )}
                   <span>{project.category}</span>
                   <span aria-hidden="true" className="text-earth">
                     /
@@ -95,22 +124,29 @@ export function ProjectsArchive() {
                 }`}
               >
                 {/* Visual */}
-                <Link
-                  href={`/projects/${project.slug}`}
-                  className={`block overflow-hidden border-b border-earth/40 ${
-                    isLead ? "lg:col-span-6 lg:border-r lg:border-b-0" : ""
-                  }`}
-                  aria-label={`Open case study for ${project.title}`}
-                >
-                  <div className="h-full transition-transform duration-500 ease-out group-hover:scale-[1.015]">
-                    <ProjectVisual
-                      slug={project.slug}
-                      className={
-                        isLead ? "h-full min-h-[260px] w-full" : "aspect-[16/10] w-full"
-                      }
-                    />
-                  </div>
-                </Link>
+                {project.isCurated ? (
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className={`block overflow-hidden border-b border-earth/40 ${
+                      isLead ? "lg:col-span-6 lg:border-r lg:border-b-0" : ""
+                    }`}
+                    aria-label={`Open case study for ${project.title}`}
+                  >
+                    {visualContent}
+                  </Link>
+                ) : (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`block overflow-hidden border-b border-earth/40 ${
+                      isLead ? "lg:col-span-6 lg:border-r lg:border-b-0" : ""
+                    }`}
+                    aria-label={`Open ${project.repoName} on GitHub`}
+                  >
+                    {visualContent}
+                  </a>
+                )}
 
                 {/* Copy & controls */}
                 <div
@@ -123,12 +159,23 @@ export function ProjectsArchive() {
                       {project.subtitle}
                     </p>
                     <h2 className="mt-2 font-serif text-3xl leading-tight font-medium text-amber sm:text-4xl">
-                      <Link
-                        href={`/projects/${project.slug}`}
-                        className="transition-opacity hover:opacity-85"
-                      >
-                        {project.title}
-                      </Link>
+                      {project.isCurated ? (
+                        <Link
+                          href={`/projects/${project.slug}`}
+                          className="transition-opacity hover:opacity-85"
+                        >
+                          {project.title}
+                        </Link>
+                      ) : (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="transition-opacity hover:opacity-85"
+                        >
+                          {project.title}
+                        </a>
+                      )}
                     </h2>
                     <p className="mt-4 text-sm leading-relaxed text-amber/80 sm:text-base">
                       {project.shortDescription}
@@ -152,13 +199,25 @@ export function ProjectsArchive() {
 
                   <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-earth/35 pt-5">
                     <div className="flex flex-wrap items-center gap-4">
-                      <Link
-                        href={`/projects/${project.slug}`}
-                        className="inline-flex items-center gap-2 border border-amber bg-amber px-4 py-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-charcoal transition-colors duration-200 hover:bg-charcoal hover:text-amber"
-                      >
-                        <span>Case Study</span>
-                        <ArrowRightIcon className="h-3.5 w-3.5" />
-                      </Link>
+                      {project.isCurated ? (
+                        <Link
+                          href={`/projects/${project.slug}`}
+                          className="inline-flex items-center gap-2 border border-amber bg-amber px-4 py-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-charcoal transition-colors duration-200 hover:bg-charcoal hover:text-amber"
+                        >
+                          <span>Case Study</span>
+                          <ArrowRightIcon className="h-3.5 w-3.5" />
+                        </Link>
+                      ) : (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 border border-amber bg-amber px-4 py-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-charcoal transition-colors duration-200 hover:bg-charcoal hover:text-amber"
+                        >
+                          <GitHubIcon className="h-3.5 w-3.5" />
+                          <span>Open Repo</span>
+                        </a>
+                      )}
 
                       <button
                         type="button"
@@ -173,15 +232,17 @@ export function ProjectsArchive() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-amber/80 transition-colors hover:text-amber"
-                      >
-                        <GitHubIcon className="h-3.5 w-3.5" />
-                        <span>Repository</span>
-                      </a>
+                      {project.isCurated && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-amber/80 transition-colors hover:text-amber"
+                        >
+                          <GitHubIcon className="h-3.5 w-3.5" />
+                          <span>Repository</span>
+                        </a>
+                      )}
                       {project.liveDemoUrl && (
                         <a
                           href={project.liveDemoUrl}
@@ -204,23 +265,29 @@ export function ProjectsArchive() {
                   <div className="grid gap-6 md:grid-cols-3">
                     <div>
                       <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-amber">
-                        Problem Statement
+                        {project.isCurated
+                          ? "Problem Statement"
+                          : "Repository Overview"}
                       </h3>
                       <p className="mt-2.5 text-sm leading-relaxed text-amber/80">
-                        {project.problemStatement}
+                        {project.isCurated
+                          ? project.problemStatement
+                          : project.overview}
                       </p>
                     </div>
                     <div>
                       <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-amber">
-                        Solution
+                        {project.isCurated ? "Solution" : "Runtime & Source"}
                       </h3>
                       <p className="mt-2.5 text-sm leading-relaxed text-amber/80">
-                        {project.solution}
+                        {project.isCurated
+                          ? project.solution
+                          : project.deploymentNote}
                       </p>
                     </div>
                     <div>
                       <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-amber">
-                        Key Features
+                        {project.isCurated ? "Key Features" : "Details"}
                       </h3>
                       <ul className="mt-2.5 space-y-2 text-sm text-amber/80">
                         {project.keyFeatures.slice(0, 3).map((feature) => (
