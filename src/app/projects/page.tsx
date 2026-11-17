@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <div className="bg-charcoal">
+    <div className="bg-transparent">
       <section className="mx-auto max-w-7xl px-6 pt-14 pb-24 sm:px-10 sm:pt-20 sm:pb-32 lg:px-12">
         {/* Breadcrumb */}
         <div className="mb-10 flex flex-wrap items-center justify-between gap-4">

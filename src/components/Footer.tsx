@@ -5,7 +5,7 @@ import { ArrowUpRightIcon, GitHubIcon, LinkedInIcon } from "./Icons";
 
 export function Footer() {
   return (
-    <footer className="border-t border-earth/50 bg-charcoal">
+    <footer className="border-t border-earth/50 bg-charcoal/85">
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-12">
         <div className="grid gap-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-5">

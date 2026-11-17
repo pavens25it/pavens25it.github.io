@@ -71,7 +71,7 @@ export function ProjectsArchive() {
           return (
             <article
               key={project.slug}
-              className={`group flex flex-col border border-earth/55 bg-charcoal transition-colors duration-300 hover:border-amber ${
+              className={`group flex flex-col border border-earth/55 bg-charcoal/85 transition-colors duration-300 hover:border-amber ${
                 isLead ? "lg:col-span-2" : ""
               }`}
             >

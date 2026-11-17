@@ -6,6 +6,7 @@ import {
 } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { ScrollBackground } from "@/components/ScrollBackground";
 import { PROFILE } from "@/data/portfolio";
 import "./globals.css";
 
@@ -73,18 +74,21 @@ export default function RootLayout({
       lang="en"
       className={`${cormorant.variable} ${jakarta.variable} ${jetbrains.variable}`}
     >
-      <body className="flex min-h-screen flex-col bg-charcoal text-amber/85">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:border focus:border-amber focus:bg-charcoal focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:uppercase focus:tracking-widest focus:text-amber"
-        >
-          Skip to content
-        </a>
-        <Navbar />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+      <body className="min-h-screen bg-charcoal text-amber/85">
+        <ScrollBackground />
+        <div className="relative z-10 flex min-h-screen flex-col">
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:border focus:border-amber focus:bg-charcoal focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:uppercase focus:tracking-widest focus:text-amber"
+          >
+            Skip to content
+          </a>
+          <Navbar />
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </div>
       </body>
     </html>
   );

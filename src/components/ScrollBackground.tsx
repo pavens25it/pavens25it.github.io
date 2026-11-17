@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const FRAME_COUNT = 20;
 const TRIM_X = 18;
 const TRIM_Y = 10;
-const FOCAL_Y = 0.25;
+const FOCAL_Y = 0.28;
 
 const framePath = (index: number) =>
   `/pictures/ezgif-frame-${String(index + 1).padStart(3, "0")}.jpg`;
 
-export function ScrollPortrait() {
+export function ScrollBackground() {
+  const pathname = usePathname();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [activeFrame, setActiveFrame] = useState(1);
   const [useCssFallback, setUseCssFallback] = useState(false);
 
   useEffect(() => {
@@ -70,8 +71,8 @@ export function ScrollPortrait() {
         }
       `;
 
-      // Crisp Contrast-Adaptive Sharpening + strict 3-color palette ramp
-      // (#242321 Charcoal Black -> #76543B Earth Brown -> #C47A36 Burnt Amber)
+      // Crisp single-frame Contrast-Adaptive Sharpening mapped strictly onto
+      // the 3-color editorial palette (#242321 -> #76543B -> #C47A36)
       const fsSource = `
         precision highp float;
         uniform sampler2D u_tex;
@@ -101,7 +102,7 @@ export function ScrollPortrait() {
 
           float lum = dot(sharp, vec3(0.30, 0.50, 0.20));
           float bandAccent = clamp((sharp.r - sharp.g) * 0.42, 0.0, 0.34);
-          float tone = clamp(pow(clamp(lum + bandAccent, 0.0, 1.0), 0.94) * 1.12, 0.0, 1.0);
+          float tone = clamp(pow(clamp(lum + bandAccent, 0.0, 1.0), 0.96) * 1.06, 0.0, 1.0);
 
           vec3 charcoal = vec3(36.0, 35.0, 33.0) / 255.0;
           vec3 earth    = vec3(118.0, 84.0, 59.0) / 255.0;
@@ -194,8 +195,11 @@ export function ScrollPortrait() {
       Math.min(max, Math.max(min, v));
 
     const getScrollProgress = () => {
-      const range = Math.max(360, Math.min(window.innerHeight * 0.95, 760));
-      return clamp(window.scrollY / range, 0, 1);
+      const maxScroll = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
+      return clamp(window.scrollY / maxScroll, 0, 1);
     };
 
     const getNearestLoadedIndex = (index: number) => {
@@ -291,7 +295,11 @@ export function ScrollPortrait() {
     const render = (force = false) => {
       const targetIndex = reducedMotionQuery.matches
         ? 0
-        : clamp(Math.round(currentProgress * (FRAME_COUNT - 1)), 0, FRAME_COUNT - 1);
+        : clamp(
+            Math.round(currentProgress * (FRAME_COUNT - 1)),
+            0,
+            FRAME_COUNT - 1
+          );
 
       const drawIndex = getNearestLoadedIndex(targetIndex);
       if (drawIndex === -1) return;
@@ -307,14 +315,12 @@ export function ScrollPortrait() {
       }
 
       lastRenderedIndex = drawIndex;
-      setActiveFrame(drawIndex + 1);
     };
 
     const resizeCanvas = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 3);
-      const rect = canvas.getBoundingClientRect();
-      const width = Math.max(1, Math.round(rect.width * dpr));
-      const height = Math.max(1, Math.round(rect.height * dpr));
+      const width = Math.max(1, Math.round(window.innerWidth * dpr));
+      const height = Math.max(1, Math.round(window.innerHeight * dpr));
 
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
@@ -372,7 +378,6 @@ export function ScrollPortrait() {
       }
     };
 
-    // Preload all 20 frames
     for (let i = 0; i < FRAME_COUNT; i++) {
       const img = new Image();
       img.decoding = "async";
@@ -420,14 +425,17 @@ export function ScrollPortrait() {
         });
       }
     };
-  }, []);
+  }, [pathname]);
 
   return (
-    <figure className="relative w-full">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-charcoal"
+    >
       {/* SVG tritone filter strictly for 2D fallback (#242321 -> #76543B -> #C47A36) */}
-      <svg className="sr-only" aria-hidden="true">
+      <svg className="sr-only">
         <defs>
-          <filter id="strict-palette-map" colorInterpolationFilters="sRGB">
+          <filter id="bg-strict-palette-map" colorInterpolationFilters="sRGB">
             <feColorMatrix
               type="matrix"
               values="0.30 0.50 0.20 0 0
@@ -444,51 +452,18 @@ export function ScrollPortrait() {
         </defs>
       </svg>
 
-      {/* Architectural frame header */}
-      <div className="mb-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.2em] text-amber/70">
-        <span>Fig. 01 — Portrait</span>
-        <span>
-          Frame {String(activeFrame).padStart(2, "0")} / {FRAME_COUNT}
-        </span>
-      </div>
+      <canvas
+        ref={canvasRef}
+        className="block h-full w-full"
+        style={
+          useCssFallback
+            ? { filter: "url(#bg-strict-palette-map)" }
+            : undefined
+        }
+      />
 
-      {/* Portrait container with restrained architectural corner brackets */}
-      <div className="relative border border-earth/60 bg-charcoal p-2.5 sm:p-3">
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-px -left-px h-3 w-3 border-t border-l border-amber"
-        />
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-px -right-px h-3 w-3 border-t border-r border-amber"
-        />
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-px -left-px h-3 w-3 border-b border-l border-amber"
-        />
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-px -right-px h-3 w-3 border-b border-r border-amber"
-        />
-
-        <div className="relative aspect-[4/5] w-full overflow-hidden bg-charcoal">
-          <canvas
-            ref={canvasRef}
-            aria-label="Scroll-reactive portrait of Paven S."
-            className="block h-full w-full"
-            style={
-              useCssFallback
-                ? { filter: "url(#strict-palette-map)" }
-                : undefined
-            }
-          />
-        </div>
-      </div>
-
-      <figcaption className="mt-3 flex items-center justify-between border-t border-earth/30 pt-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber/60">
-        <span>Scroll-Reactive Sequence</span>
-        <span>Kongu Engineering College</span>
-      </figcaption>
-    </figure>
+      {/* Restrained Charcoal Black veil so foreground editorial typography remains crisp */}
+      <div className="absolute inset-0 bg-charcoal/65" />
+    </div>
   );
 }

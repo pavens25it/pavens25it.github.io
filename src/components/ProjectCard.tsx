@@ -10,7 +10,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <article className="group flex h-full flex-col border border-earth/55 bg-charcoal transition-colors duration-300 hover:border-amber">
+    <article className="group flex h-full flex-col border border-earth/55 bg-charcoal/85 transition-colors duration-300 hover:border-amber">
       {/* Top index & category bar */}
       <div className="flex items-center justify-between border-b border-earth/40 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em]">
         <span className="text-amber/80">

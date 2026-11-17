@@ -52,7 +52,7 @@ export default async function ProjectDetailPage({
     currentIdx < PROJECTS.length - 1 ? PROJECTS[currentIdx + 1] : PROJECTS[0];
 
   return (
-    <article className="bg-charcoal">
+    <article className="bg-transparent">
       {/* Header & case study metadata */}
       <section className="border-b border-earth/45">
         <div className="mx-auto max-w-7xl px-6 pt-12 pb-16 sm:px-10 sm:pt-16 sm:pb-20 lg:px-12">
@@ -161,7 +161,7 @@ export default async function ProjectDetailPage({
         <div className="mx-auto max-w-7xl px-6 py-20 sm:px-10 sm:py-24 lg:px-12">
           <div className="grid gap-16 lg:grid-cols-12">
             {/* Main editorial prose */}
-            <div className="space-y-14 lg:col-span-8">
+            <div className="space-y-14 border border-earth/45 bg-charcoal/85 p-7 sm:p-10 lg:col-span-8">
               {/* 1. Overview */}
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.2em] text-earth">
@@ -237,7 +237,7 @@ export default async function ProjectDetailPage({
 
             {/* Sticky sidebar: Technology Stack & External Links */}
             <aside className="lg:col-span-4">
-              <div className="space-y-8 border border-earth/55 bg-earth/10 p-6 sm:p-8 lg:sticky lg:top-28">
+              <div className="space-y-8 border border-earth/55 bg-charcoal/85 p-6 sm:p-8 lg:sticky lg:top-28">
                 <div>
                   <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-earth">
                     Technology Stack
@@ -300,7 +300,7 @@ export default async function ProjectDetailPage({
         <div className="grid gap-6 sm:grid-cols-2">
           <Link
             href={`/projects/${prevProject.slug}`}
-            className="group border border-earth/45 p-6 transition-colors duration-200 hover:border-amber"
+            className="group border border-earth/45 bg-charcoal/80 p-6 transition-colors duration-200 hover:border-amber"
           >
             <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-earth group-hover:text-amber">
               <ArrowLeftIcon className="h-3.5 w-3.5" />
@@ -313,7 +313,7 @@ export default async function ProjectDetailPage({
 
           <Link
             href={`/projects/${nextProject.slug}`}
-            className="group border border-earth/45 p-6 text-left transition-colors duration-200 hover:border-amber sm:text-right"
+            className="group border border-earth/45 bg-charcoal/80 p-6 text-left transition-colors duration-200 hover:border-amber sm:text-right"
           >
             <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-earth group-hover:text-amber">
               <span>Next Project</span>
