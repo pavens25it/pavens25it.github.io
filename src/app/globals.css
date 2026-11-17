@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@theme {
+  /* Strict 3-color palette — disable all other Tailwind color scales */
+  --color-*: initial;
+  --color-charcoal: #242321;
+  --color-earth: #76543B;
+  --color-amber: #C47A36;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Editorial typography system */
+  --font-serif: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    background-color: #242321;
+    color: #C47A36;
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: #242321;
+    color: rgba(196, 122, 54, 0.86);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: #C47A36;
+    color: #242321;
+  }
+
+  :focus-visible {
+    outline: 1px solid #C47A36;
+    outline-offset: 3px;
+  }
+
+  /* Custom editorial scrollbar strictly within the 3-color palette */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #242321;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #76543B;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #C47A36;
+  }
+}
+
+/* Subtle architectural grid hairline helper */
+.editorial-rule {
+  border-color: rgba(118, 84, 59, 0.45);
+}
+
+/* Smooth reveal animation respecting reduced motion */
+.reveal-base {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-base {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
