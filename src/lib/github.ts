@@ -8,8 +8,8 @@ import {
 } from "@/data/portfolio";
 
 const GITHUB_USERNAME = "pavens25it";
-const IGNORED_REPOS = new Set(["pavens25it.github.io"]);
-const CACHE_KEY = "pavens25it_github_repos_v1";
+const IGNORED_REPOS = new Set(["pavens25it.github.io", "web-to-fun"]);
+const CACHE_KEY = "pavens25it_github_repos_v2";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 export interface PortfolioProject extends Project {
@@ -32,15 +32,6 @@ interface GitHubRepoAPI {
 
 function inferCategory(repo: GitHubRepoAPI): ProjectCategory {
   const lang = (repo.language || "").toLowerCase();
-  const topics = (repo.topics || []).map((t) => t.toLowerCase());
-
-  if (
-    topics.some((t) =>
-      ["animation", "interactive", "game", "canvas", "motion"].includes(t)
-    )
-  ) {
-    return "Interactive";
-  }
 
   if (
     [

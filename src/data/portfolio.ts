@@ -1,7 +1,4 @@
-export type ProjectCategory =
-  | "Backend & Systems"
-  | "Frontend & Web"
-  | "Interactive";
+export type ProjectCategory = "Backend & Systems" | "Frontend & Web";
 
 export interface Project {
   slug: string;
@@ -62,13 +59,12 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     index: "02",
     title: "Frontend Development",
     description:
-      "Component-driven interfaces, App Router architectures, and motion-enhanced web experiences.",
+      "Component-driven interfaces, App Router architectures, and responsive web experiences.",
     items: [
       "Next.js (App Router)",
       "React",
       "Tailwind CSS",
       "Vite",
-      "Framer Motion",
       "Responsive Design",
     ],
   },
@@ -300,59 +296,12 @@ export const PROJECTS: Project[] = [
     deploymentNote: "Source repository built with Vite (npm run dev / npm run build).",
     primaryLanguage: "TypeScript",
   },
-  {
-    slug: "web-to-fun",
-    index: "05",
-    repoName: "web-to-fun",
-    title: "Web to Fun",
-    subtitle: "Motion-Driven Interactive Experience with Framer Motion & Next.js",
-    category: "Interactive",
-    year: "2026",
-    featured: false,
-    shortDescription:
-      "Interactive Next.js web experience exploring Framer Motion spring physics, scroll-linked reveals, audio controls, and a stateful browser mini-game.",
-    overview:
-      "An experimental interactive web project built with Next.js App Router, TypeScript, Tailwind CSS, and Framer Motion. Explores scroll-driven spring mechanics, choreographed animations, ambient controls, and lightweight game-loop state management directly in React.",
-    problemStatement:
-      "Static pages rarely exercise stateful real-time animation pipelines—building an interactive web piece provides hands-on practice with spring physics, viewport choreography, and game state transitions.",
-    solution:
-      "Combined Framer Motion primitives (useScroll, useSpring, useTransform, AnimatePresence) with structured content modules (lib/content.ts) and typed game states (intro, playing, won, lost) deployed live on Vercel.",
-    keyFeatures: [
-      "Scroll-linked spring progress tracking with Framer Motion useScroll and useSpring.",
-      "Reusable Reveal choreography using custom cubic-bezier easing and viewport triggers.",
-      "Stateful mini-game managing falling interactive items, phases (intro, playing, won, lost), and milestones.",
-      "Interactive audio controls and structured content separation in lib/content.ts.",
-      "Deployed live on Vercel with Next.js App Router.",
-    ],
-    technologies: [
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Tailwind CSS",
-      "Framer Motion",
-      "Lucide React",
-      "Vercel",
-    ],
-    developmentProcess: [
-      "Configured Next.js App Router with Tailwind CSS v4 and Framer Motion.",
-      "Separated copy and media metadata into lib/content.ts for clean rendering.",
-      "Built scroll-linked motion wrappers and stateful game phases with typed React hooks.",
-      "Deployed production build to Vercel.",
-    ],
-    visualCaption:
-      "Motion pipeline: Scroll spring curve feeding viewport reveal choreography and interactive React game states.",
-    githubUrl: "https://github.com/pavens25it/web-to-fun",
-    liveDemoUrl: "https://web-to-fun.vercel.app",
-    deploymentNote: "Live deployment hosted on Vercel.",
-    primaryLanguage: "TypeScript",
-  },
 ];
 
 export const PROJECT_CATEGORIES: Array<"All" | ProjectCategory> = [
   "All",
   "Backend & Systems",
   "Frontend & Web",
-  "Interactive",
 ];
 
 export function getProjectBySlug(slug: string): Project | undefined {
